@@ -1,0 +1,182 @@
+# JuJ Hub Cursor Rules
+# 这个文件定义了JuJ Hub项目的编码规范和工作流程
+
+# 开发者角色定义
+role:
+  title: "Senior Front-End Developer"
+  expertise: ["ReactJS", "NextJS", "TypeScript", "TailwindCSS", "Framer Motion", "HTML", "CSS"]
+  approach: ["思考周全", "逐步规划", "严格遵循需求", "确保准确性", "全面实现功能"]
+
+# 项目规则
+rules:
+  # 代码规范
+  - name: "使用TypeScript"
+    description: "所有新代码应该使用TypeScript编写，确保类型安全"
+    severity: "warning"
+  
+  - name: "使用'use client'指令"
+    description: "对于包含客户端功能(如useState、useEffect等)的组件，确保添加'use client'指令"
+    pattern: "(useState|useEffect|useRef|useCallback|useMemo)"
+    severity: "error"
+    not_has: "'use client'"
+  
+  - name: "使用TailwindCSS"
+    description: "样式应使用TailwindCSS类，避免内联样式和CSS文件"
+    severity: "warning"
+    
+  - name: "DRY原则"
+    description: "避免代码重复，确保逻辑复用"
+    severity: "warning"
+    
+  - name: "使用早期返回"
+    description: "尽可能使用早期返回模式，提高代码可读性"
+    pattern: "if\\s*\\([^)]+\\)\\s*\\{[\\s\\S]+return[\\s\\S]+\\}\\s*else"
+    severity: "info"
+    
+  - name: "完整实现"
+    description: "不允许使用TODO或占位符，确保功能完全实现"
+    pattern: "(TODO|FIXME|XXX|@todo)"
+    severity: "error"
+    
+  - name: "使用箭头函数常量"
+    description: "使用const定义函数而非function关键字，并指定类型"
+    pattern: "function\\s+\\w+"
+    not_has: "export default function"
+    severity: "info"
+  
+  # 可访问性
+  - name: "交互元素需要aria标签"
+    description: "所有按钮、链接等交互元素需要合适的aria-label属性"
+    pattern: "<(button|a)\\s[^>]*(?!aria-label)[^>]*>"
+    severity: "warning"
+  
+  - name: "交互元素需要tabIndex"
+    description: "所有交互元素应该可以通过键盘访问"
+    pattern: "<(button|a)\\s[^>]*(?!tabIndex)[^>]*>"
+    severity: "warning"
+    
+  - name: "完整的无障碍支持"
+    description: "交互元素需同时具备tabindex、aria-label、点击和键盘事件处理"
+    pattern: "<a\\s[^>]*"
+    not_has: "(tabIndex|tabindex).*aria-label.*on(Click|KeyDown)"
+    severity: "warning"
+
+  # 性能
+  - name: "避免大型内联SVG"
+    description: "避免直接在代码中包含大型SVG数据，考虑使用外部文件"
+    pattern: "data:image/svg\\+xml;base64,[a-zA-Z0-9+/]{1000,}"
+    severity: "warning"
+  
+  - name: "图片需要占位符和回退"
+    description: "所有图片应使用ImageWithFallback组件以处理加载失败情况"
+    pattern: "<Image\\s"
+    not_has: "<ImageWithFallback"
+    severity: "info"
+    
+  # Windows环境
+  - name: "Windows PowerShell命令语法"
+    description: "在Windows PowerShell中使用分号(;)连接命令，而非&&"
+    pattern: "cd\\s+[\\w/\\\\.-]+\\s*&&"
+    severity: "error"
+    suggestion: "使用'cd 目录; 命令'替代'cd 目录 && 命令'"
+
+  # 风格一致性
+  - name: "组件命名规范"
+    description: "组件名称应使用PascalCase"
+    pattern: "const [a-z]\\w* = \\([^)]*\\) => {"
+    severity: "warning"
+  
+  - name: "事件处理函数命名"
+    description: "事件处理函数应以handle前缀命名，如handleClick、handleKeyDown"
+    pattern: "on(Click|Change|Submit|Input|KeyDown|KeyPress)={(?!handle)[^}]*}"
+    severity: "warning"
+  
+  - name: "使用紫蓝渐变色调"
+    description: "UI强调色应使用项目标准的紫蓝渐变"
+    pattern: "from-(?!purple|blue|gray).*to-(?!purple|blue|gray)"
+    severity: "info"
+    
+  - name: "使用class:代替三元运算符"
+    description: "在类标签中使用class:语法代替三元运算符"
+    pattern: "className=\\{.*\\?.*\\:.*\\}"
+    severity: "info"
+    
+  - name: "描述性变量名称"
+    description: "使用描述性变量和函数名称，清晰表达意图"
+    pattern: "const [a-z]\\b = "
+    severity: "info"
+
+# 工作流程配置
+workflow:
+  # 项目偏好设置
+  preferences:
+    language: "typescript"
+    framework: "nextjs"
+    ui_framework: "tailwindcss"
+    animation_library: "framer-motion"
+  
+  # 命名约定
+  naming_conventions:
+    components: "PascalCase"
+    functions: "camelCase"
+    event_handlers: "handle[EventName]"
+    constants: "UPPER_SNAKE_CASE"
+    css_classes: "kebab-case"
+    
+  # 开发流程
+  development_process:
+    step1: "逐步思考 - 详细规划构建计划"
+    step2: "确认需求 - 验证与用户需求一致" 
+    step3: "编写代码 - 遵循最佳实践"
+    step4: "验证完整性 - 确保无遗漏功能"
+    step5: "优化代码 - 提高可读性和维护性"
+  
+  # 文件组织
+  file_organization:
+    components: "app/components/"
+    pages: "app/"
+    data: "app/data/"
+    styles: "app/globals.css"
+    public_assets: "public/"
+
+# 自定义设置
+custom:
+  color_palette:
+    primary: ["from-purple-400", "to-blue-500"]
+    background: ["bg-gray-900", "bg-gray-800/50"]
+    text: ["text-white", "text-gray-300"]
+    border: ["border-gray-700/30", "border-purple-500/10"]
+  
+  spacing:
+    page_padding: ["px-4 sm:px-6 lg:px-8"]
+    component_gap: ["gap-4 sm:gap-6"]
+    section_spacing: ["my-20", "py-10"]
+  
+  animation:
+    fade_in: 'initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ duration: 0.3 }}'
+    hover: 'hover:scale-[1.02] hover:-translate-y-1 transition-all duration-300'
+    
+  # 编码优先级
+  priorities:
+    readability: "优先考虑代码可读性，而非过度优化性能"
+    completeness: "确保功能完整，无遗漏或占位符"
+    accessibility: "实现完善的无障碍支持"
+    maintainability: "编写易于维护的代码"
+    
+  # 支持的框架
+  supported_frameworks:
+    ui: ["TailwindCSS", "Shadcn", "Radix"]
+    state: ["React Hooks"]
+    animation: ["Framer Motion"]
+    icons: ["React Icons", "阿里巴巴iconfont"]
+    
+  # 环境特定配置
+  environment:
+    os: "Windows"
+    shell: "PowerShell"
+    command_separator: ";"
+    path_separator: "\\"
+    commands:
+      dev: "cd jujhub; npm run dev"
+      build: "cd jujhub; npm run build"
+      start: "cd jujhub; npm start" 
