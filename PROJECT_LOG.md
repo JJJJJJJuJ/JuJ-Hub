@@ -7,6 +7,52 @@
 
 ## 开发日志
 
+### 2025-07-01
+
+#### 部署优化与端口转发配置
+- 完善了Windows Server部署方案:
+  - 创建了`setup-portproxy.ps1`脚本，用于配置端口转发
+  - 创建了`setup-pm2.ps1`脚本，用于配置PM2开机自启
+  - 优化了`setup-https.ps1`脚本，支持HTTPS配置
+  - 添加了`portproxy-setup.bat`批处理脚本，用于开机自启端口转发
+- 更新了部署文档:
+  - 重写了`部署教程.md`，添加详细的端口转发配置说明
+  - 创建了`部署教程-新版.md`，提供更简洁的部署步骤
+  - 更新了README.md中的部署说明
+- 解决了部署中的问题:
+  - 修复了IIS与端口转发的冲突问题
+  - 优化了证书配置步骤
+  - 添加了防火墙配置说明
+
+### 2025-06-30
+
+#### HTTPS支持完善
+- 添加了完整的HTTPS支持:
+  - 创建了`https-server.js`，支持SSL证书加载
+  - 创建了`http-server.js`，将HTTP请求重定向到HTTPS
+  - 创建了`start-servers.js`，同时启动HTTP和HTTPS服务
+  - 添加了`ecosystem-https.config.js`，用于PM2管理HTTPS服务
+- 更新了`package.json`，添加HTTPS相关命令:
+  - `npm run start:https`: 启动HTTPS服务器
+  - `npm run start:http`: 启动HTTP重定向服务器
+  - `npm run start:all`: 同时启动HTTP和HTTPS服务器
+- 添加了Let's Encrypt证书配置支持:
+  - 配置了`next.config.js`，支持ACME挑战
+  - 添加了证书自动续期说明
+
+### 2025-06-29
+
+#### 部署准备
+- 准备了Windows Server部署环境:
+  - 测试了Node.js 18.x兼容性
+  - 配置了PM2进程管理
+  - 测试了端口转发和IIS反向代理两种方案
+  - 确定使用端口转发作为推荐方案
+- 创建了部署文档:
+  - 编写了详细的安装步骤
+  - 添加了故障排除指南
+  - 提供了开机自启配置说明
+
 ### 2025-06-28
 
 #### 添加返回顶部功能
@@ -185,22 +231,45 @@
   - 阿里巴巴矢量图标库集成
 - 开发环境可正常运行
 - 集成了AI辅助编辑工具栏(stagewise)
+- 完成了Windows Server部署配置
+  - 支持HTTP和HTTPS访问
+  - 配置了端口转发
+  - 设置了PM2进程管理
+  - 实现了开机自启
 
 ## 待办事项
-- [ ] 构建生产版本
-- [ ] 部署到Windows 2012服务器
+- [x] 构建生产版本
+- [x] 部署到Windows Server服务器
 - [x] 添加软件搜索功能
 - [x] 集成阿里巴巴矢量图标库
+- [x] 配置HTTPS支持
+- [x] 配置端口转发
 - [ ] 开发管理后台(未来计划)
 - [ ] 性能优化(懒加载、代码拆分)
 
 ## 部署说明
-部署到Windows 2012服务器的步骤:
+部署到Windows Server服务器的步骤:
 1. 执行 `npm run build` 构建生产版本
-2. 使用 `npm start` 启动服务
-3. 配置反向代理或直接通过端口访问
+2. 使用PM2管理应用: `pm2 start ecosystem.config.js`
+3. 配置端口转发: `netsh interface portproxy add v4tov4 listenport=80 listenaddress=0.0.0.0 connectport=3000 connectaddress=127.0.0.1`
+4. 配置开机自启: 使用计划任务运行`portproxy-setup.bat`和`start-jujhub.bat`
+
+详细部署步骤请参考 `部署教程.md` 或 `部署教程-新版.md`。
+
+## 部署相关文件说明
+- **ecosystem.config.js**: PM2配置文件，用于管理HTTP服务
+- **ecosystem-https.config.js**: PM2配置文件，同时管理HTTP和HTTPS服务
+- **https-server.js**: HTTPS服务器，监听3001端口
+- **http-server.js**: HTTP重定向服务器，监听3000端口
+- **start-servers.js**: 同时启动HTTP和HTTPS服务器的脚本
+- **setup-https.ps1**: HTTPS配置脚本
+- **portproxy-setup.bat**: 端口转发批处理脚本
+- **部署教程.md**: 详细部署文档
+- **部署教程-新版.md**: 简化版部署文档
 
 ## 注意事项
 - 软件图片链接可能会失效，已添加占位图处理机制
 - 网站目前使用静态数据，未连接后端数据库
-- stagewise工具栏仅在开发模式下显示 
+- stagewise工具栏仅在开发模式下显示
+- 部署时需要停止IIS服务，释放80端口
+- 证书路径需要根据实际情况调整 

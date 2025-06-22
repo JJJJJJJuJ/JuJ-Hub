@@ -43,8 +43,8 @@ JuJ Hub是专为软件下载需求打造的平台，采用现代化的UI设计�
 
 3. 启动开发服务器
    ```
-   cd jujhub; npm run dev
-```
+   npm run dev
+   ```
 
 4. 打开浏览器访问 http://localhost:3000
 
@@ -59,6 +59,59 @@ JuJ Hub是专为软件下载需求打造的平台，采用现代化的UI设计�
    ```
    npm start
    ```
+
+## HTTPS 支持
+
+项目支持HTTPS访问，相关文件包括：
+
+- `https-server.js`：HTTPS服务器，使用SSL证书提供HTTPS访问
+- `http-server.js`：HTTP重定向服务器，将HTTP请求重定向到HTTPS
+- `start-servers.js`：同时启动HTTP和HTTPS服务器的脚本
+- `ecosystem-https.config.js`：PM2配置文件，用于在生产环境中运行服务器
+- `setup-https.ps1`：PowerShell脚本，用于在Windows服务器上配置HTTPS
+
+### 开发环境使用HTTPS
+
+```bash
+# 首先构建项目
+npm run build
+
+# 启动HTTPS服务器
+npm run start:https
+
+# 或者同时启动HTTP和HTTPS服务器
+npm run start:all
+```
+
+### 生产环境部署
+
+详细的部署步骤请参考 `部署教程.md` 或 `部署教程-新版.md` 文件。
+
+#### 部署脚本
+
+项目提供了多个部署脚本，简化服务器配置过程：
+
+1. **setup-https.ps1**: HTTPS服务配置脚本
+   - 配置HTTPS服务器
+   - 设置证书
+   - 配置443端口转发
+
+2. **portproxy-setup.bat**: 端口转发批处理脚本
+   - 配置80端口转发到3000端口
+   - 配置443端口转发到3001端口
+   - 由计划任务自动执行
+
+#### 端口转发配置
+
+在Windows Server上，使用以下命令配置端口转发：
+
+```powershell
+# 配置HTTP端口转发
+netsh interface portproxy add v4tov4 listenport=80 listenaddress=0.0.0.0 connectport=3000 connectaddress=127.0.0.1
+
+# 配置HTTPS端口转发
+netsh interface portproxy add v4tov4 listenport=443 listenaddress=0.0.0.0 connectport=3001 connectaddress=127.0.0.1
+```
 
 ## 项目结构
 
@@ -91,13 +144,21 @@ jujhub/
 │   └── favicon.ico          # 网站图标
 ├── public/                  # 静态资源
 ├── next.config.mjs          # Next.js配置
-├── next.config.js           # 额外的Next.js配置
+├── next.config.js           # 额外的Next.js配置（含ACME挑战配置）
 ├── next.config.ts           # TypeScript的Next.js配置
 ├── tailwind.config.ts       # TailwindCSS配置
 ├── postcss.config.mjs       # PostCSS配置
 ├── tsconfig.json            # TypeScript配置
 ├── eslint.config.mjs        # ESLint配置
 ├── next-env.d.ts            # Next.js类型声明
+├── https-server.js          # HTTPS服务器
+├── http-server.js           # HTTP重定向服务器
+├── start-servers.js         # 同时启动HTTP和HTTPS服务器的脚本
+├── ecosystem-https.config.js # PM2 HTTPS配置
+├── setup-https.ps1          # HTTPS配置脚本
+├── portproxy-setup.bat      # 端口转发批处理脚本
+├── 部署教程.md               # 详细部署文档
+├── 部署教程-新版.md           # 简化版部署文档
 ├── PROJECT_LOG.md           # 项目日志
 └── README.md                # 项目说明
 ```

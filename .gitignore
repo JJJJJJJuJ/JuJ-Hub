@@ -39,3 +39,18 @@ yarn-error.log*
 # typescript
 *.tsbuildinfo
 next-env.d.ts
+
+# 确保HTTPS相关文件不被忽略
+!https-server.js
+!http-server.js
+!start-servers.js
+!ecosystem-https.config.js
+!setup-https.ps1
+
+# 但是忽略实际的证书文件
+*.pem
+*.pfx
+*.key
+*.crt
+*.cer
+certificates/

@@ -6,6 +6,9 @@
     "dev": "next dev --turbopack",
     "build": "next build",
     "start": "next start",
+    "start:https": "node https-server.js",
+    "start:http": "node http-server.js",
+    "start:all": "node start-servers.js",
     "lint": "next lint"
   },
   "dependencies": {
